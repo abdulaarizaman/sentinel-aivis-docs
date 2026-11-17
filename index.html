@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071a35">
+  <meta name="description" content="Official technical documentation for SENTINEL AIVIS — an educational AI and vision-based intelligent access-control prototype.">
+  <title>SENTINEL AIVIS — Documentation</title>
+  <style>
+    :root{
+      --bg:#f5f8fd;--surface:#fff;--surface-2:#edf4ff;--ink:#10213d;--muted:#60718c;
+      --line:#dce6f3;--blue:#1769e0;--blue-2:#3b82f6;--navy:#071a35;--navy-2:#0d2b55;
+      --cyan:#49c6e5;--green:#0d9b78;--shadow:0 14px 40px rgba(16,48,91,.09);
+      --sidebar:280px;--radius:18px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth;scroll-padding-top:90px}
+    body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    a{color:var(--blue);text-decoration:none}a:hover{text-decoration:underline}
+    button,input{font:inherit}
+    button{cursor:pointer}
+    .topbar{height:68px;position:fixed;z-index:50;inset:0 0 auto 0;background:rgba(255,255,255,.92);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 22px}
+    .brand{display:flex;align-items:center;gap:11px;color:var(--ink);font-weight:800;letter-spacing:.04em}
+    .brand-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#0b2d60,#1875ed);display:grid;place-items:center;color:#fff;box-shadow:0 7px 18px #1769e044}
+    .brand-mark svg{width:23px;height:23px}
+    .brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:.19em;font-weight:700;margin-top:-4px}
+    .top-actions{display:flex;align-items:center;gap:10px}
+    .top-link{font-size:13px;color:#38506f;font-weight:650;padding:8px 11px}
+    .top-cta,.btn{border:0;border-radius:11px;padding:10px 15px;background:var(--blue);color:#fff;font-weight:700;display:inline-flex;align-items:center;gap:8px;box-shadow:0 7px 18px #1769e02b}
+    .top-cta:hover,.btn:hover{background:#0e55bf;text-decoration:none}
+    .menu-toggle{display:none;border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px;color:var(--ink)}
+    .sidebar{position:fixed;z-index:30;top:68px;bottom:0;left:0;width:var(--sidebar);overflow-y:auto;background:#fff;border-right:1px solid var(--line);padding:25px 17px 32px}
+    .side-label{font-size:10px;letter-spacing:.16em;color:#8b9bb2;font-weight:800;padding:13px 12px 7px}
+    .nav-link{display:flex;align-items:center;gap:11px;padding:9px 12px;border-radius:9px;color:#536783;font-size:13px;font-weight:620;margin:2px 0;transition:.18s}
+    .nav-link svg{width:17px;height:17px;opacity:.8;flex:none}
+    .nav-link:hover{background:#f0f5fd;color:var(--blue);text-decoration:none}
+    .nav-link.active{background:#eaf2ff;color:#125ac4;font-weight:760}
+    .side-note{margin:23px 5px 0;padding:14px;border-radius:13px;background:linear-gradient(145deg,#eff6ff,#f7fbff);border:1px solid #dceaff;font-size:11px;color:#637693}
+    .side-note strong{display:block;color:#1a4c91;font-size:12px;margin-bottom:4px}
+    main{margin-left:var(--sidebar);padding-top:68px}
+    .container{width:min(1120px,calc(100% - 64px));margin:0 auto}
+    .hero{position:relative;overflow:hidden;background:radial-gradient(ellipse at 80% 10%,#174d91 0,transparent 38%),linear-gradient(125deg,#061832,#0b2a55 60%,#0b3970);color:#fff;padding:85px 0 76px;min-height:500px}
+    .hero:before,.hero:after{content:"";position:absolute;border:1px solid #ffffff14;border-radius:50%;width:500px;height:500px;right:-100px;top:-170px}
+    .hero:after{width:370px;height:370px;right:-35px;top:-105px}
+    .hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:1.12fr .88fr;gap:40px;align-items:center}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid #8fc7ff45;background:#ffffff0d;color:#b9ddff;border-radius:99px;padding:6px 12px;font-size:10px;letter-spacing:.15em;font-weight:800;text-transform:uppercase}
+    .pulse{width:7px;height:7px;border-radius:50%;background:#50d6b0;box-shadow:0 0 0 5px #50d6b022}
+    h1{font-size:clamp(42px,6vw,68px);line-height:1.04;letter-spacing:-.055em;margin:22px 0 12px}
+    .hero-subtitle{font-size:clamp(17px,2vw,21px);color:#b8d3f5;font-weight:550;margin:0 0 16px}
+    .hero-copy{color:#c0cfe2;max-width:570px;font-size:14px}
+    .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:27px}
+    .btn-light{background:#fff;color:#123c75;box-shadow:none}.btn-light:hover{background:#eaf3ff}
+    .btn-outline{background:transparent;border:1px solid #9dc8ff65;color:#fff;box-shadow:none}.btn-outline:hover{background:#ffffff12}
+    .hero-meta{display:flex;gap:24px;flex-wrap:wrap;margin-top:32px;color:#a8bfdc;font-size:11px}
+    .hero-meta b{color:#fff;display:block;font-size:13px}
+    .hero-art{position:relative;min-height:310px;display:grid;place-items:center}
+    .orbit{position:absolute;width:290px;height:290px;border:1px solid #75b9ff3b;border-radius:50%;box-shadow:0 0 70px #2384ff16,inset 0 0 60px #2384ff12}
+    .orbit:before,.orbit:after{content:"";position:absolute;border:1px dashed #7cbaff4d;border-radius:50%;inset:24px}
+    .orbit:after{inset:54px;border-style:solid;opacity:.45}
+    .core{position:relative;width:156px;height:156px;border-radius:34px;background:linear-gradient(145deg,#174d91,#0c2b55);border:1px solid #8ac8ff70;display:grid;place-items:center;box-shadow:0 20px 70px #0006,0 0 45px #2b92ff42}
+    .core svg{width:88px;height:88px}
+    .float-chip{position:absolute;background:#0c2b51dd;border:1px solid #80bfff45;border-radius:12px;padding:9px 12px;color:#dcecff;font-size:10px;box-shadow:0 12px 28px #0003}
+    .float-chip b{display:block;font-size:11px;color:#fff}
+    .chip-a{top:32px;left:0}.chip-b{right:-4px;top:90px}.chip-c{bottom:27px;left:16px}
+    .section{padding:76px 0;border-bottom:1px solid var(--line)}
+    .section.white{background:#fff}
+    .section-head{max-width:720px;margin-bottom:30px}
+    .kicker{color:var(--blue);font-size:10px;font-weight:850;letter-spacing:.18em;text-transform:uppercase}
+    h2{font-size:clamp(28px,3.5vw,39px);line-height:1.15;letter-spacing:-.04em;margin:9px 0 12px}
+    h3{font-size:18px;line-height:1.3;margin:0 0 9px;letter-spacing:-.02em}
+    p{margin:0 0 13px;color:var(--muted)}
+    .lead{font-size:16px;max-width:760px}
+    .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+    .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+    .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:0 5px 20px #173a6608}
+    .card p{font-size:13px;margin-bottom:0}
+    .icon-box{width:42px;height:42px;border-radius:13px;background:#eaf2ff;color:#1769e0;display:grid;place-items:center;margin-bottom:16px}
+    .icon-box svg{width:21px;height:21px}
+    .tag{display:inline-flex;padding:4px 8px;border-radius:7px;background:#edf4ff;color:#2762ac;font-size:10px;font-weight:750;margin:3px 4px 0 0}
+    .notice{border:1px solid #cfe2ff;background:#f0f6ff;border-radius:14px;padding:16px 18px;color:#365b8a;font-size:13px}
+    .notice strong{color:#164f9e}
+    .flow{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:26px 0}
+    .flow-step{position:relative;border:1px solid var(--line);background:#fff;border-radius:14px;padding:17px 13px;text-align:center;min-height:145px}
+    .flow-step:not(:last-child):after{content:"→";position:absolute;right:-13px;top:42%;z-index:2;color:#4b8fe9;font-size:19px;font-weight:800}
+    .step-num{width:26px;height:26px;border-radius:50%;background:#e6f0ff;color:#1769e0;font-size:11px;font-weight:850;display:grid;place-items:center;margin:0 auto 10px}
+    .flow-step b{display:block;font-size:12px;margin-bottom:5px}
+    .flow-step span{display:block;color:var(--muted);font-size:10px;line-height:1.45}
+    .diagram-wrap{background:linear-gradient(145deg,#071b38,#0c3263);border-radius:20px;padding:25px;color:#fff;overflow:hidden}
+    .diagram-title{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px}
+    .diagram-title p{color:#aac5e7;font-size:12px;margin:0}
+    .architecture{display:grid;grid-template-columns:1fr 42px 1fr 42px 1fr;align-items:center;gap:8px}
+    .arch-col{display:grid;gap:9px}
+    .arch-node{border:1px solid #8bbcff4a;background:#ffffff0b;border-radius:12px;padding:12px;text-align:center;font-size:11px;color:#e5f1ff}
+    .arch-node b{display:block;color:#fff;font-size:12px}
+    .arch-node small{color:#9dbce0;font-size:9px}
+    .arch-arrow{text-align:center;color:#7dbbff;font-size:24px}
+    .arch-core{border-color:#60aaff;background:#1769e044;box-shadow:0 0 25px #237eff24}
+    .diagram-caption{font-size:10px;color:#9dbce0;text-align:center;margin-top:17px}
+    .spec-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:13px}
+    .spec-table th,.spec-table td{text-align:left;padding:13px 15px;border-bottom:1px solid var(--line);vertical-align:top}
+    .spec-table th{background:#f0f5fc;color:#365578;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+    .spec-table tr:last-child td{border-bottom:0}
+    .spec-table td:first-child{font-weight:750;color:#1c3c65;width:25%}
+    .code-pill{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#edf3fb;border-radius:5px;padding:2px 5px;font-size:11px;color:#24558d}
+    .feature-list{display:grid;gap:11px}
+    .feature{display:flex;gap:12px;align-items:flex-start}
+    .check{width:22px;height:22px;flex:none;border-radius:7px;background:#e3f7f1;color:#0c9874;display:grid;place-items:center;font-weight:900;font-size:12px}
+    .feature b{display:block;font-size:13px;margin-bottom:2px}
+    .feature span{font-size:12px;color:var(--muted)}
+    .gallery{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:14px}
+    .gallery-item{min-height:190px;border-radius:16px;overflow:hidden;background:linear-gradient(145deg,#0b2b56,#1c68b6);position:relative;color:#fff;padding:18px;display:flex;flex-direction:column;justify-content:space-between}
+    .gallery-item svg{width:100%;height:125px}
+    .gallery-item b{font-size:12px}
+    .gallery-item span{font-size:10px;color:#c3dcfa}
+    .faq details{border:1px solid var(--line);border-radius:12px;padding:15px 17px;background:#fff;margin-bottom:9px}
+    .faq summary{font-size:13px;font-weight:750;cursor:pointer;color:#1c3b62}
+    .faq details p{font-size:12px;margin:10px 0 0}
+    .contact-panel{background:linear-gradient(120deg,#08234a,#1053a0);border-radius:20px;padding:34px;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:24px}
+    .contact-panel p{color:#c2d8f5;max-width:580px;font-size:13px}
+    .contact-panel h2{margin-top:0}
+    .contact-links{display:flex;gap:9px;flex-wrap:wrap}
+    .contact-links a{padding:10px 13px;border:1px solid #a8ccf54d;border-radius:10px;color:#fff;font-size:12px;font-weight:700}
+    .contact-links a:hover{background:#ffffff15;text-decoration:none}
+    footer{background:#06162d;color:#a8bdd8;padding:30px 0;font-size:11px}
+    .footer-inner{display:flex;justify-content:space-between;gap:20px;align-items:center;flex-wrap:wrap}
+    footer b{color:#fff}
+    .backtop{position:fixed;right:22px;bottom:22px;width:42px;height:42px;border-radius:13px;border:0;background:#1769e0;color:#fff;box-shadow:0 8px 24px #1769e055;display:none;z-index:20}
+    .backtop.show{display:grid;place-items:center}
+    .search-overlay{position:fixed;inset:0;background:#06162dbb;z-index:100;display:none;align-items:flex-start;justify-content:center;padding:12vh 20px}
+    .search-overlay.open{display:flex}
+    .search-box{width:min(600px,100%);background:#fff;border-radius:18px;padding:18px;box-shadow:0 25px 80px #0005}
+    .search-row{display:flex;gap:10px}
+    .search-row input{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;outline:none}
+    .search-results{max-height:300px;overflow:auto;margin-top:12px}
+    .search-result{display:block;padding:10px;border-radius:9px;color:var(--ink);font-size:13px}
+    .search-result:hover{background:#edf4ff;text-decoration:none}
+    .mobile-scrim{display:none}
+    @media(max-width:1000px){:root{--sidebar:245px}.hero-grid{grid-template-columns:1fr .75fr}.flow{grid-template-columns:repeat(3,1fr)}.flow-step:nth-child(3):after{display:none}}
+    @media(max-width:760px){
+      .topbar{padding:0 15px}.menu-toggle{display:block}.top-actions .top-link{display:none}
+      .sidebar{transform:translateX(-102%);transition:transform .25s ease;width:min(300px,86vw);box-shadow:15px 0 40px #071a3520}
+      .sidebar.open{transform:translateX(0)}.mobile-scrim.show{display:block;position:fixed;inset:68px 0 0;background:#071a3555;z-index:25}
+      main{margin-left:0}.container{width:min(100% - 36px,650px)}
+      .hero{padding:58px 0 55px}.hero-grid{grid-template-columns:1fr}.hero-art{min-height:250px;max-width:420px;width:100%;margin:auto}.orbit{width:230px;height:230px}.core{width:125px;height:125px}
+      .grid-2,.grid-3{grid-template-columns:1fr}.flow{grid-template-columns:1fr 1fr}.flow-step:nth-child(2):after,.flow-step:nth-child(4):after{display:none}
+      .architecture{grid-template-columns:1fr}.arch-arrow{transform:rotate(90deg);line-height:1}.gallery{grid-template-columns:1fr 1fr}.gallery-item:first-child{grid-column:span 2}
+      .contact-panel{display:block;padding:25px}.contact-links{margin-top:18px}
+      .section{padding:57px 0}.spec-table{font-size:11px}.spec-table th,.spec-table td{padding:10px 9px}
+    }
+    @media(max-width:430px){.flow{grid-template-columns:1fr}.flow-step:after{display:none!important}.gallery{grid-template-columns:1fr}.gallery-item:first-child{grid-column:auto}.hero-meta{gap:14px}.top-cta{padding:9px 10px;font-size:11px}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{transition:none!important;animation:none!important}}
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <button class="menu-toggle" id="menuToggle" aria-label="Open navigation" aria-expanded="false">
+      <svg viewBox="0 0 24 24" width="21" height="21" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a class="brand" href="#home" aria-label="SENTINEL AIVIS home">
+      <span class="brand-mark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2.8 20 6v5.4c0 5.1-3.3 8.4-8 10-4.7-1.6-8-4.9-8-10V6l8-3.2Z"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg></span>
+      <span>SENTINEL AIVIS<small>PROJECT DOCUMENTATION</small></span>
+    </a>
+    <div class="top-actions">
+      <a class="top-link" href="#overview">Overview</a>
+      <a class="top-link" href="#architecture">Architecture</a>
+      <button class="top-cta" id="openSearch" type="button">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg>
+        Search docs
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-scrim" id="scrim"></div>
+  <aside class="sidebar" id="sidebar" aria-label="Documentation navigation">
+    <div class="side-label">GETTING STARTED</div>
+    <a class="nav-link active" href="#home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z"/></svg>Introduction</a>
+    <a class="nav-link" href="#overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 11v5m0-8h.01"/></svg>Project overview</a>
+    <a class="nav-link" href="#objectives"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m5 12 4 4L19 6"/></svg>Objectives & scope</a>
+    <div class="side-label">TECHNICAL DOCUMENTATION</div>
+    <a class="nav-link" href="#workflow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="7" height="6" rx="1"/><rect x="14" y="14" width="7" height="6" rx="1"/><path d="M10 7h4a2 2 0 0 1 2 2v5"/></svg>How it works</a>
+    <a class="nav-link" href="#architecture"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="8" y="8" width="8" height="8" rx="1"/><path d="M12 2v6m0 8v6M2 12h6m8 0h6M5 5l4 4m6 6 4 4m0-14-4 4m-6 6-4 4"/></svg>System architecture</a>
+    <a class="nav-link" href="#hardware"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4m6-4v4M9 18v4m6-4v4M2 9h4m-4 6h4m12-6h4m-4 6h4"/></svg>Hardware components</a>
+    <a class="nav-link" href="#software"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m8 8-4 4 4 4m8-8 4 4-4 4m-3-11-2 14"/></svg>Software stack</a>
+    <a class="nav-link" href="#ai"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3a3 3 0 0 0-3 3v1a3 3 0 0 0 0 6v1a3 3 0 0 0 3 3h6a3 3 0 0 0 3-3v-1a3 3 0 0 0 0-6V6a3 3 0 0 0-3-3Z"/><path d="M9 8h.01M15 8h.01M9 13h6"/></svg>AI & verification</a>
+    <div class="side-label">PROJECT DETAILS</div>
+    <a class="nav-link" href="#applications"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 10h.01M15 10h.01M9 14h.01M15 14h.01"/></svg>Applications</a>
+    <a class="nav-link" href="#limitations"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5m0 3h.01"/></svg>Limitations & safety</a>
+    <a class="nav-link" href="#future"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 17 9 11l4 4 8-9"/><path d="M15 6h6v6"/></svg>Future development</a>
+    <a class="nav-link" href="#gallery"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>Gallery</a>
+    <a class="nav-link" href="#faq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.3 1.7c-1.1 1-1.9 1.3-1.9 2.8m0 3h.01"/></svg>FAQ</a>
+    <a class="nav-link" href="#contact"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Credits & contact</a>
+    <div class="side-note"><strong>Documentation note</strong>This website describes an educational prototype. It is not a certified or production-ready security system.</div>
+  </aside>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow"><i class="pulse"></i> TECHNICAL PROJECT DOCUMENTATION</span>
+          <h1>SENTINEL<br><span style="color:#71baff">AIVIS</span></h1>
+          <p class="hero-subtitle">Artificial Intelligence and Voice-Integrated Sight</p>
+          <p class="hero-copy">An educational intelligent access-control prototype that brings together computer vision, voice-based identity verification, sensor-based detection and embedded control.</p>
+          <div class="hero-actions">
+            <a class="btn btn-light" href="#overview">Explore documentation <span aria-hidden="true">→</span></a>
+            <a class="btn btn-outline" href="https://aivis-v.onrender.com/" target="_blank" rel="noopener noreferrer">Open visitor portal ↗</a>
+          </div>
+          <div class="hero-meta">
+            <span><b>AI + Vision</b>Intelligent verification</span>
+            <span><b>Embedded system</b>Arduino-based control</span>
+            <span><b>Connected software</b>Python · Node.js · Database</span>
+          </div>
+        </div>
+        <div class="hero-art" aria-label="Illustration of an intelligent security system">
+          <div class="orbit"></div>
+          <div class="core">
+            <svg viewBox="0 0 100 100" fill="none" stroke="#d8edff" stroke-width="2.5">
+              <path d="M50 8 82 21v23c0 23-14 38-32 48C32 82 18 67 18 44V21L50 8Z" stroke="#79bdff" stroke-width="3"/>
+              <circle cx="50" cy="43" r="13"/><path d="M28 70c4-12 13-18 22-18s18 6 22 18"/>
+              <path d="m42 43 5 5 11-12" stroke="#62e0c1" stroke-width="3"/>
+            </svg>
+          </div>
+          <div class="float-chip chip-a"><b>VISION MODULE</b>Face recognition</div>
+          <div class="float-chip chip-b"><b>VOICE MODULE</b>Spoken ID check</div>
+          <div class="float-chip chip-c"><b>CONTROL UNIT</b>Arduino + servo</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white" id="overview">
+      <div class="container">
+        <div class="section-head"><div class="kicker">01 / INTRODUCTION</div><h2>What is SENTINEL AIVIS?</h2><p class="lead">SENTINEL AIVIS explores how different technologies can work together to make an access-control demonstration more interactive and intelligent.</p></div>
+        <div class="grid-2">
+          <article class="card"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2.8 20 6v5.4c0 5.1-3.3 8.4-8 10-4.7-1.6-8-4.9-8-10V6l8-3.2Z"/><path d="M8 12h8m-4-4v8"/></svg></div><h3>Project concept</h3><p>The prototype combines an ultrasonic sensor for approach detection, a laptop-hosted AI engine for identity checks, and an Arduino-controlled model gate for demonstrating an access decision.</p></article>
+          <article class="card"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4M7 9h10m-10 4h6"/></svg></div><h3>System approach</h3><p>The laptop acts as the main processing unit. Python handles AI-related tasks, a Node.js application supports monitoring, a database stores registered identity records, and Arduino manages physical model components.</p></article>
+        </div>
+        <div class="notice" style="margin-top:18px"><strong>Name expansion:</strong> AIVIS stands for <b>Artificial Intelligence and Voice-Integrated Sight</b>. The name reflects the project's combination of visual recognition and voice interaction.</div>
+      </div>
+    </section>
+
+    <section class="section" id="objectives">
+      <div class="container">
+        <div class="section-head"><div class="kicker">02 / PROJECT FOUNDATION</div><h2>Objectives & scope</h2><p>The project is designed to demonstrate the integration of AI software, electronics and a physical access-control model.</p></div>
+        <div class="grid-3">
+          <article class="card"><div class="icon-box">◎</div><h3>Approach detection</h3><p>Detect an approaching object or visitor using an ultrasonic distance sensor.</p></article>
+          <article class="card"><div class="icon-box">◉</div><h3>Identity verification</h3><p>Demonstrate voice-based ID checking alongside a camera-based face-recognition module.</p></article>
+          <article class="card"><div class="icon-box">⌘</div><h3>Automated response</h3><p>Send a decision to the Arduino controller to demonstrate the gate response and status display.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white" id="workflow">
+      <div class="container">
+        <div class="section-head"><div class="kicker">03 / WORKING PRINCIPLE</div><h2>How the system works</h2><p class="lead">The prototype follows a sequence of detection, identity checks, decision handling and a model-gate response.</p></div>
+        <div class="flow" aria-label="System working sequence">
+          <div class="flow-step"><div class="step-num">01</div><b>Approach detection</b><span>Ultrasonic sensor detects a nearby object or visitor.</span></div>
+          <div class="flow-step"><div class="step-num">02</div><b>Voice interaction</b><span>The system prompts for a registered spoken ID or credential.</span></div>
+          <div class="flow-step"><div class="step-num">03</div><b>Face check</b><span>The camera and AI engine perform the configured visual identity check.</span></div>
+          <div class="flow-step"><div class="step-num">04</div><b>Decision</b><span>The application evaluates the verification result and status.</span></div>
+          <div class="flow-step"><div class="step-num">05</div><b>Gate response</b><span>Arduino controls the model servo gate and display status.</span></div>
+        </div>
+        <div class="notice"><strong>Important:</strong> This is a demonstration workflow. A successful software result should not be treated as proof of real-world identity or as authorization for a real door or facility.</div>
+      </div>
+    </section>
+
+    <section class="section" id="architecture">
+      <div class="container">
+        <div class="section-head"><div class="kicker">04 / SYSTEM DESIGN</div><h2>System architecture</h2><p>The laptop coordinates the AI and application layers, while the Arduino handles the connected electronics.</p></div>
+        <div class="diagram-wrap">
+          <div class="diagram-title"><div><h3 style="margin:0;color:#fff">High-level architecture</h3><p>Conceptual view of the main system modules</p></div><span class="tag" style="background:#ffffff18;color:#cce4ff">SYSTEM MAP</span></div>
+          <div class="architecture">
+            <div class="arch-col">
+              <div class="arch-node"><b>Input devices</b><small>Webcam · Microphone</small></div>
+              <div class="arch-node"><b>Distance sensor</b><small>Ultrasonic module</small></div>
+              <div class="arch-node"><b>User interaction</b><small>Spoken ID · Display</small></div>
+            </div>
+            <div class="arch-arrow">⇄</div>
+            <div class="arch-col">
+              <div class="arch-node arch-core"><b>Laptop / AI Engine</b><small>Python · Vision · Voice</small></div>
+              <div class="arch-node"><b>Monitoring application</b><small>Node.js · Express</small></div>
+              <div class="arch-node"><b>Identity records</b><small>MongoDB Atlas</small></div>
+            </div>
+            <div class="arch-arrow">⇄</div>
+            <div class="arch-col">
+              <div class="arch-node"><b>Arduino UNO</b><small>USB serial communication</small></div>
+              <div class="arch-node"><b>Servo motor</b><small>Model gate movement</small></div>
+              <div class="arch-node"><b>LCD displays</b><small>Status and messages</small></div>
+            </div>
+          </div>
+          <div class="diagram-caption">Conceptual architecture only. Exact wiring, communication protocol and deployment configuration depend on the implementation.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white" id="hardware">
+      <div class="container">
+        <div class="section-head"><div class="kicker">05 / ELECTRONICS</div><h2>Hardware components</h2><p>Electronic components provide sensing, display and physical movement in the exhibition model.</p></div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Core components</h3>
+            <table class="spec-table">
+              <thead><tr><th>Component</th><th>Purpose</th></tr></thead>
+              <tbody>
+                <tr><td>Arduino UNO</td><td>Controls the connected hardware and model-gate response.</td></tr>
+                <tr><td>Ultrasonic sensor</td><td>Measures distance for approach detection.</td></tr>
+                <tr><td>Servo motor</td><td>Moves the demonstration gate mechanism.</td></tr>
+                <tr><td>LCD displays (2)</td><td>Show system messages and status information.</td></tr>
+                <tr><td>Webcam</td><td>Provides image input to the computer-vision module.</td></tr>
+                <tr><td>Microphone / speaker</td><td>Support voice input and spoken system responses through the laptop.</td></tr>
+                <tr><td>Laptop</td><td>Runs the AI engine, monitoring application and connected software.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <h3>Component roles</h3>
+            <div class="feature-list">
+              <div class="feature"><span class="check">✓</span><div><b>Sensing layer</b><span>Collects distance and camera input from the environment.</span></div></div>
+              <div class="feature"><span class="check">✓</span><div><b>Processing layer</b><span>The laptop processes the AI and application logic.</span></div></div>
+              <div class="feature"><span class="check">✓</span><div><b>Control layer</b><span>Arduino receives commands and controls the model hardware.</span></div></div>
+              <div class="feature"><span class="check">✓</span><div><b>Feedback layer</b><span>LCDs and laptop audio communicate system status.</span></div></div>
+            </div>
+            <div class="notice" style="margin-top:18px">Always verify the correct voltage, current requirements, wiring and common-ground arrangement before powering electronics. Do not rely on a laptop USB port to supply a motor beyond its rated capability.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="software">
+      <div class="container">
+        <div class="section-head"><div class="kicker">06 / SOFTWARE</div><h2>Software & technology stack</h2><p>The software is divided into focused modules so that AI processing, monitoring and hardware control can work together.</p></div>
+        <div class="grid-3">
+          <article class="card"><div class="icon-box">Py</div><h3>Python AI Engine</h3><p>Hosts the computer-vision and voice-related processing modules on the laptop.</p><div><span class="tag">Python</span><span class="tag">DeepFace</span><span class="tag">Camera input</span></div></article>
+          <article class="card"><div class="icon-box">JS</div><h3>Monitoring application</h3><p>A Node.js and Express application provides a software layer for viewing system status and monitoring events.</p><div><span class="tag">Node.js</span><span class="tag">Express</span><span class="tag">JavaScript</span></div></article>
+          <article class="card"><div class="icon-box">DB</div><h3>Database</h3><p>MongoDB Atlas is used for registered identity information and application data, according to the configured implementation.</p><div><span class="tag">MongoDB Atlas</span><span class="tag">Mongoose</span></div></article>
+          <article class="card"><div class="icon-box">↔</div><h3>Hardware communication</h3><p>The Arduino UNO connects to the laptop through USB for serial communication and control messages.</p><div><span class="tag">Arduino UNO</span><span class="tag">USB serial</span></div></article>
+          <article class="card"><div class="icon-box">UI</div><h3>Web interface</h3><p>Web-based interfaces support administration and monitoring workflows where implemented.</p><div><span class="tag">HTML</span><span class="tag">CSS</span><span class="tag">JavaScript</span></div></article>
+          <article class="card"><div class="icon-box">AI</div><h3>AI integration</h3><p>AI components are coordinated by the local engine. Recognition quality depends on models, data and operating conditions.</p><div><span class="tag">Computer vision</span><span class="tag">Voice processing</span></div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white" id="ai">
+      <div class="container">
+        <div class="section-head"><div class="kicker">07 / INTELLIGENT FEATURES</div><h2>AI & identity verification</h2><p>The project demonstrates two different identity-related inputs: a spoken credential and a visual face-recognition process.</p></div>
+        <div class="grid-2">
+          <article class="card"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M8 6v12m8-12v12M4 9v6m16-6v6"/></svg></div><h3>Voice interaction</h3><p>The voice module listens for a spoken ID or configured credential and passes the captured input to the verification workflow. Audio quality, background noise and speech-recognition accuracy can affect results.</p></article>
+          <article class="card"><div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="12" cy="11" r="3"/><path d="M7 18c1-2 2.5-3 5-3s4 1 5 3"/></svg></div><h3>Face recognition</h3><p>The webcam supplies visual input to the Python computer-vision module. The configured recognition system compares the detected face with enrolled reference data.</p></article>
+        </div>
+        <div class="notice" style="margin-top:18px"><strong>Privacy note:</strong> Face images, voice recordings and identity records are sensitive personal data. Obtain informed permission before collecting or demonstrating them, limit access, and avoid publishing real people's biometric data in this documentation.</div>
+      </div>
+    </section>
+
+    <section class="section" id="applications">
+      <div class="container">
+        <div class="section-head"><div class="kicker">08 / USE CASES</div><h2>Potential applications</h2><p>These are areas where related technologies may be explored. They are not claims that this prototype is approved for deployment in these environments.</p></div>
+        <div class="grid-3">
+          <article class="card"><div class="icon-box">⌂</div><h3>Demonstration entrances</h3><p>Exhibition models that explain how sensing and identity workflows can be connected.</p></article>
+          <article class="card"><div class="icon-box">▦</div><h3>Learning laboratories</h3><p>Educational demonstrations of embedded systems, databases, AI and application integration.</p></article>
+          <article class="card"><div class="icon-box">⌑</div><h3>Prototype research</h3><p>A starting point for studying multi-factor verification and human-computer interaction.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white" id="limitations">
+      <div class="container">
+        <div class="section-head"><div class="kicker">09 / TRANSPARENCY</div><h2>Limitations & safety</h2><p>Clear limitations make technical documentation more credible. This project is an educational prototype, not a certified security product.</p></div>
+        <div class="grid-2">
+          <div class="card"><h3>Current prototype considerations</h3>
+            <div class="feature-list">
+              <div class="feature"><span class="check">!</span><div><b>Recognition reliability</b><span>Lighting, camera quality, noise and environmental conditions can affect recognition.</span></div></div>
+              <div class="feature"><span class="check">!</span><div><b>Hardware constraints</b><span>Model-scale components and power arrangements are not equivalent to industrial access hardware.</span></div></div>
+              <div class="feature"><span class="check">!</span><div><b>Network dependency</b><span>Database and hosted-service availability can affect connected features.</span></div></div>
+              <div class="feature"><span class="check">!</span><div><b>Security validation</b><span>The prototype has not been independently audited or certified for real-world security use.</span></div></div>
+            </div>
+          </div>
+          <div class="card"><h3>Responsible demonstration</h3><p>Use only consenting participants and test records. Do not connect this exhibition prototype to a real building entrance, emergency exit or critical security system.</p><p>Keep credentials private, secure database access, and avoid sharing API keys, tokens, private repository links or personal identity data in public screenshots.</p><p>Any real deployment would require professional engineering, threat modelling, privacy review, fail-safe design, independent testing and compliance with applicable laws.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="future">
+      <div class="container">
+        <div class="section-head"><div class="kicker">10 / ROADMAP</div><h2>Future development</h2><p>Possible improvements for future versions, subject to testing, resources and project requirements.</p></div>
+        <div class="grid-3">
+          <article class="card"><span class="tag">PHASE 01</span><h3>Reliability improvements</h3><p>Improve error handling, calibration, status reporting and repeatable testing.</p></article>
+          <article class="card"><span class="tag">PHASE 02</span><h3>Interface improvements</h3><p>Build clearer monitoring dashboards, event history and accessible documentation.</p></article>
+          <article class="card"><span class="tag">PHASE 03</span><h3>Security & privacy review</h3><p>Evaluate secure credential handling, consent, data retention and independent testing.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white" id="gallery">
+      <div class="container">
+        <div class="section-head"><div class="kicker">11 / VISUAL OVERVIEW</div><h2>Project gallery</h2><p>Illustrative technical visuals are included below. Replace them with original photographs of your actual model, electronics and exhibition demonstration for the final public version.</p></div>
+        <div class="gallery">
+          <div class="gallery-item">
+            <svg viewBox="0 0 420 150" fill="none" aria-label="Illustration of a model gate"><path d="M70 125V30h28v95M322 125V30h28v95" stroke="#a9d7ff" stroke-width="8"/><path d="M98 42h224M98 42l110 40 114-40" stroke="#72b7ff" stroke-width="5"/><path d="M110 82h90v43h-90zM220 82h90v43h-90z" fill="#174c87" stroke="#a9d7ff"/><path d="M210 82v43" stroke="#fff" stroke-dasharray="4 4"/><path d="M48 128h324" stroke="#8bc8ff" stroke-width="3"/></svg>
+            <div><b>01 — Model access gate</b><span>Replace with a real project photograph</span></div>
+          </div>
+          <div class="gallery-item">
+            <svg viewBox="0 0 300 150" fill="none" aria-label="Illustration of electronics"><rect x="76" y="25" width="148" height="100" rx="9" fill="#0b2850" stroke="#9fd2ff" stroke-width="2"/><rect x="103" y="45" width="94" height="52" rx="5" fill="#155a9c" stroke="#8bc8ff"/><path d="M118 58h64M118 70h48M118 82h55" stroke="#bde3ff" stroke-width="3"/><path d="M60 45h16m-16 15h16m-16 15h16m148-30h16m-16 15h16m-16 15h16" stroke="#6ab8ff" stroke-width="3"/></svg>
+            <div><b>02 — Control electronics</b><span>Arduino and connected modules</span></div>
+          </div>
+          <div class="gallery-item">
+            <svg viewBox="0 0 300 150" fill="none" aria-label="Illustration of a monitoring screen"><rect x="45" y="18" width="210" height="112" rx="8" fill="#071b38" stroke="#9ed0ff" stroke-width="2"/><path d="M45 38h210" stroke="#9ed0ff"/><circle cx="58" cy="28" r="3" fill="#68d8b4"/><circle cx="69" cy="28" r="3" fill="#ffd27c"/><rect x="60" y="51" width="70" height="62" rx="4" fill="#123d70"/><rect x="140" y="51" width="100" height="25" rx="4" fill="#155a9c"/><rect x="140" y="84" width="100" height="29" rx="4" fill="#123d70"/><path d="M151 63h70m-70 32h62m-62 8h45" stroke="#bde3ff" stroke-width="3"/></svg>
+            <div><b>03 — Monitoring interface</b><span>Application dashboard illustration</span></div>
+          </div>
+        </div>
+        <div class="notice" style="margin-top:16px"><strong>Gallery update:</strong> To make this documentation authentic, add your own exhibition photos and short demonstration video. Do not present illustrative graphics as photographs of the finished hardware.</div>
+      </div>
+    </section>
+
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-head"><div class="kicker">12 / HELP</div><h2>Frequently asked questions</h2><p>Quick answers to common questions about the project.</p></div>
+        <div class="faq">
+          <details><summary>What does AIVIS stand for?</summary><p>AIVIS stands for Artificial Intelligence and Voice-Integrated Sight.</p></details>
+          <details><summary>What is the main processing unit?</summary><p>The laptop acts as the main processing unit, running the Python AI engine and the Node.js monitoring application.</p></details>
+          <details><summary>What is the role of Arduino UNO?</summary><p>Arduino UNO handles the connected electronics, including the servo-driven model gate and display-related control.</p></details>
+          <details><summary>Why are voice and face checks included?</summary><p>They demonstrate two different identity-related inputs—spoken credentials and visual recognition—as part of the project's learning objective.</p></details>
+          <details><summary>Can SENTINEL AIVIS be used to secure a real building?</summary><p>No. The current project is an educational prototype and is not certified, independently audited or suitable for controlling real-world access.</p></details>
+          <details><summary>Where can I try the visitor portal?</summary><p>The project's visitor portal is available at <a href="https://aivis-v.onrender.com/" target="_blank" rel="noopener noreferrer">aivis-v.onrender.com</a>. Availability depends on the hosting service.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <section class="section white" id="contact">
+      <div class="container">
+        <div class="contact-panel">
+          <div><div class="kicker" style="color:#8fc8ff">13 / PROJECT LINKS</div><h2>Explore SENTINEL AIVIS</h2><p>Visit the project portal or connect with the project creator. GitHub and email links below are placeholders until the correct public profile and contact address are added.</p></div>
+          <div class="contact-links">
+            <a href="https://aivis-v.onrender.com/" target="_blank" rel="noopener noreferrer">Visitor portal ↗</a>
+            <a href="https://github.com/YOUR_GITHUB_USERNAME" target="_blank" rel="noopener noreferrer" data-placeholder="github">GitHub ↗</a>
+            <a href="mailto:YOUR_EMAIL@example.com" data-placeholder="email">Email ↗</a>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:18px">
+          <div class="card"><h3>Project creator</h3><p><b style="color:#183b67">Aariz</b><br>Student project developer and team lead</p></div>
+          <div class="card"><h3>Credits</h3><p>Developed as an educational science and technology project with contributions from the project team. Add the final team member names and individual responsibilities here before publishing.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container footer-inner">
+        <div><b>SENTINEL AIVIS</b><br>Artificial Intelligence and Voice-Integrated Sight</div>
+        <div>Technical documentation · Educational prototype · <span id="year"></span></div>
+        <div><a href="#home" style="color:#9ccaff">Back to top ↑</a></div>
+      </div>
+    </footer>
+  </main>
+
+  <button class="backtop" id="backTop" aria-label="Back to top">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 14 6-6 6 6"/></svg>
+  </button>
+
+  <div class="search-overlay" id="searchOverlay" role="dialog" aria-modal="true" aria-label="Search documentation">
+    <div class="search-box">
+      <div class="search-row">
+        <input id="searchInput" type="search" placeholder="Search documentation..." aria-label="Search documentation">
+        <button class="btn" id="closeSearch" type="button">Close</button>
+      </div>
+      <div class="search-results" id="searchResults"><p style="font-size:12px;margin:10px 2px">Type a topic, component or feature to search this documentation.</p></div>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      "use strict";
+      const $ = (selector, root = document) => root.querySelector(selector);
+      const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+
+      const sidebar = $("#sidebar");
+      const menuToggle = $("#menuToggle");
+      const scrim = $("#scrim");
+      const searchOverlay = $("#searchOverlay");
+      const searchInput = $("#searchInput");
+      const searchResults = $("#searchResults");
+
+      $("#year").textContent = new Date().getFullYear();
+
+      function closeMenu() {
+        sidebar.classList.remove("open");
+        scrim.classList.remove("show");
+        menuToggle.setAttribute("aria-expanded", "false");
+      }
+      menuToggle.addEventListener("click", () => {
+        const isOpen = sidebar.classList.toggle("open");
+        scrim.classList.toggle("show", isOpen);
+        menuToggle.setAttribute("aria-expanded", String(isOpen));
+      });
+      scrim.addEventListener("click", closeMenu);
+      $$(".nav-link").forEach(link => link.addEventListener("click", closeMenu));
+
+      function openSearch() {
+        searchOverlay.classList.add("open");
+        searchInput.value = "";
+        searchResults.innerHTML = '<p style="font-size:12px;margin:10px 2px">Type a topic, component or feature to search this documentation.</p>';
+        window.setTimeout(() => searchInput.focus(), 30);
+      }
+      function closeSearch() {
+        searchOverlay.classList.remove("open");
+        $("#openSearch").focus();
+      }
+      $("#openSearch").addEventListener("click", openSearch);
+      $("#closeSearch").addEventListener("click", closeSearch);
+      searchOverlay.addEventListener("click", event => {
+        if (event.target === searchOverlay) closeSearch();
+      });
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          if (searchOverlay.classList.contains("open")) closeSearch();
+          closeMenu();
+        }
+        if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === "k") {
+          event.preventDefault();
+          openSearch();
+        }
+      });
+
+      const searchableSections = [
+        ["Introduction", "#home", "SENTINEL AIVIS project documentation"],
+        ["Project overview", "#overview", "concept educational prototype"],
+        ["Objectives and scope", "#objectives", "goals approach detection identity access control"],
+        ["How it works", "#workflow", "ultrasonic voice face recognition decision gate"],
+        ["System architecture", "#architecture", "laptop Python Node Express MongoDB Arduino"],
+        ["Hardware components", "#hardware", "Arduino UNO ultrasonic sensor servo LCD webcam microphone"],
+        ["Software stack", "#software", "Python DeepFace Node.js Express MongoDB Atlas Mongoose"],
+        ["AI and verification", "#ai", "voice interaction face recognition privacy"],
+        ["Applications", "#applications", "education laboratory prototype research"],
+        ["Limitations and safety", "#limitations", "prototype reliability security privacy"],
+        ["Future development", "#future", "roadmap improvements"],
+        ["Project gallery", "#gallery", "illustrations photos model electronics"],
+        ["FAQ", "#faq", "questions answers"],
+        ["Credits and contact", "#contact", "GitHub email visitor portal"]
+      ];
+      function renderResults(query) {
+        const q = query.trim().toLowerCase();
+        if (!q) {
+          searchResults.innerHTML = '<p style="font-size:12px;margin:10px 2px">Type a topic, component or feature to search this documentation.</p>';
+          return;
+        }
+        const matches = searchableSections.filter(item => (item.join(" ") + " " + item[2]).toLowerCase().includes(q));
+        searchResults.innerHTML = "";
+        if (!matches.length) {
+          searchResults.innerHTML = '<p style="font-size:12px;margin:10px 2px;color:#60718c">No matching section found. Try “Arduino”, “voice”, “AI” or “architecture”.</p>';
+          return;
+        }
+        matches.forEach(item => {
+          const a = document.createElement("a");
+          a.className = "search-result";
+          a.href = item[1];
+          a.textContent = item[0] + " — " + item[2];
+          a.addEventListener("click", closeSearch);
+          searchResults.appendChild(a);
+        });
+      }
+      searchInput.addEventListener("input", () => renderResults(searchInput.value));
+
+      const backTop = $("#backTop");
+      window.addEventListener("scroll", () => {
+        backTop.classList.toggle("show", window.scrollY > 500);
+      }, { passive: true });
+      backTop.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+
+      const sections = $$("main section[id]");
+      const navLinks = $$(".nav-link");
+      if ("IntersectionObserver" in window) {
+        const observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+            if (!entry.isIntersecting) return;
+            navLinks.forEach(link => {
+              const active = link.getAttribute("href") === "#" + entry.target.id;
+              link.classList.toggle("active", active);
+            });
+          });
+        }, { rootMargin: "-25% 0px -65% 0px", threshold: 0 });
+        sections.forEach(section => observer.observe(section));
+      }
+
+      // Flag unfinished contact placeholders so they are easy to find before publishing.
+      $$("[data-placeholder]").forEach(link => {
+        link.addEventListener("click", event => {
+          const isUnset = link.href.includes("YOUR_GITHUB_USERNAME") || link.href.includes("YOUR_EMAIL");
+          if (isUnset) {
+            event.preventDefault();
+            alert("Please replace this placeholder with your real public " +
+              (link.dataset.placeholder === "github" ? "GitHub profile URL." : "email address.") +
+              " before publishing the website.");
+          }
+        });
+      });
+    })();
+  </script>
+</body>
+</html>
